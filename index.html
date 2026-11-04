@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#edf2e9">
+<title>上班攒钱时钟</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f5ee;color:#22392f;font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+main{max-width:1160px;margin:auto;padding:32px 24px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:38px}
+.brand{font-size:22px;font-weight:800}
+.brand i{background:#294e3d;color:#fff;padding:8px 12px;border-radius:13px;font-style:normal;margin-right:10px}
+.sub{color:#839084;font-size:12px;letter-spacing:2px;margin-top:10px}
+.pill{background:#e4eadd;border-radius:30px;padding:10px 15px;font-size:13px}
+.layout{display:grid;grid-template-columns:1.65fr 1fr;gap:24px}
+.card{background:#fff;border:1px solid #e1e6da;border-radius:26px;padding:30px}
+.hero{background:#e5eddd;position:relative;overflow:hidden;min-height:378px}
+.topline{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.muted{color:#748071;font-size:13px;line-height:1.8}
+.status{font-size:13px;font-weight:bold}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#61855a;margin-right:7px}
+h1{font-size:17px;font-weight:500;margin:35px 0 12px}
+.money{font-size:clamp(40px,6vw,72px);font-weight:600;letter-spacing:-3px;font-variant-numeric:tabular-nums}
+.money small{font-size:22px;letter-spacing:0;margin-left:10px}
+.hero-foot{display:flex;justify-content:space-between;align-items:center;margin-top:24px;border-top:1px solid #cdd9c4;padding-top:20px}
+.leaf{font-size:32px}
+.segment{display:flex;gap:4px;background:#d6e1ce;padding:4px;border-radius:12px}
+.segment button{border:0;background:none;border-radius:9px;padding:7px 12px;color:#54644b}
+.segment button.active{background:white;color:#264b32;box-shadow:0 2px 5px #00000008}
+.progress-card{margin-top:20px}
+.progress-title{display:flex;justify-content:space-between;align-items:center}
+.countdown{font-size:27px;font-variant-numeric:tabular-nums;font-weight:700;margin:10px 0 20px}
+.bar{height:9px;background:#edf0e9;border-radius:5px;overflow:hidden}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,#61855a,#83a674);border-radius:5px;transition:width .3s}
+.row{display:flex;justify-content:space-between;margin-top:16px;font-size:13px;color:#748071}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.stat{text-align:center;padding:20px 10px}
+.stat strong{display:block;font-size:22px;margin-top:6px}
+.stat .muted{font-size:11px}
+.footer{margin-top:24px;text-align:center;color:#a0aa9e;font-size:12px;line-height:1.8}
+aside h2{font-size:18px;margin:0 0 6px}
+.form .field{margin-top:16px}
+.form label{display:block;font-size:13px;margin-bottom:6px;color:#54644b}
+.form input,.form select{width:100%;padding:10px 12px;border:1px solid #d6dcd0;border-radius:10px;background:#fafbf7;font-size:14px}
+.form input:focus,.form select:focus{outline:none;border-color:#83a674}
+.form .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form .check{display:flex;align-items:center;gap:8px}
+.form .check input{width:auto}
+.form button.save{width:100%;margin-top:20px;padding:14px;border:0;border-radius:14px;background:#294e3d;color:#fff;font-size:15px;font-weight:600}
+.form button.save:hover{background:#1e3a2d}
+.summary{margin-top:16px;padding:12px;background:#f0f4ec;border-radius:10px;font-size:13px;color:#54644b}
+.error{margin-top:10px;font-size:13px;color:#c44}
+.note{font-size:11px;color:#a0aa9e;line-height:1.8;margin-top:16px}
+.custom .days{display:flex;gap:6px;margin-top:8px}
+.custom .days button{flex:1;padding:10px 0;border:1px solid #d6dcd0;border-radius:8px;background:#fafbf7;font-size:13px}
+.custom .days button.on{background:#294e3d;color:#fff;border-color:#294e3d}
+.days button{border:0;background:none;border-radius:9px;padding:7px 12px;color:#54644b}
+.salary-preset{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.salary-preset button{padding:6px 12px;border:1px solid #d6dcd0;border-radius:20px;background:#fafbf7;font-size:12px;color:#54644b}
+.salary-preset button:hover{background:#e5eddd}
+.payday-card{margin-top:20px}
+.payday-card .countdown{font-size:20px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-left:8px}
+.badge.tax{background:#fef3e2;color:#b8860b}
+.badge.net{background:#e8f0e4;color:#61855a}
+</style>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqXP8AAAAJUlEQVR4nO3OAQ0AAAjAoNc/9CzHA4cQOgxgSQQAWAUAAPwBHwEBAF2sAwAAAABJRU5ErkJggg==">
+</head>
+<body>
+<main>
+<header>
+<div>
+<div class="brand"><i>¥</i>上班攒钱时钟</div>
+<div class="sub">每一秒都在变富，深圳打工人加油</div>
+</div>
+<div class="pill">✦ 今天也在慢慢变富</div>
+</header>
+<div class="layout">
+<section>
+<div class="card hero">
+<div class="topline">
+<span class="status" id="status"></span>
+<span class="muted" id="date"></span>
+</div>
+<h1>今日已赚（税前）</h1>
+<div class="money"><span id="money">0.00</span><small id="unitLabel">元</small></div>
+<div class="muted" id="rate"></div>
+<div class="muted" id="netRate"></div>
+<div class="hero-foot">
+<div>
+<div style="font-size:14px">小钱慢慢攒，生活慢慢来。</div>
+<div class="muted" id="stepNote"></div>
+</div>
+<div class="segment" id="units">
+<button data-unit="1">元</button>
+<button data-unit="10">毛</button>
+<button data-unit="100">分</button>
+</div>
+</div>
+</div>
+<div class="card progress-card">
+<div class="progress-title">
+<h2 id="countTitle">距离下班</h2>
+<span class="muted" id="pct"></span>
+</div>
+<div class="countdown" id="countdown"></div>
+<div class="bar"><span id="bar"></span></div>
+<div class="row">
+<span id="hours"></span>
+<span id="shift"></span>
+</div>
+</div>
+<div class="card payday-card">
+<div class="progress-title">
+<h2>距离发工资</h2>
+<span class="muted" id="paydayDate"></span>
+</div>
+<div class="countdown" id="paydayCountdown"></div>
+<div class="muted" id="paydayInfo"></div>
+</div>
+<div class="stats">
+<div class="card stat">
+<span class="muted">本月累计 · 税前</span>
+<strong id="month"></strong>
+<span class="badge tax" id="monthTax"></span>
+</div>
+<div class="card stat">
+<span class="muted">税后时薪</span>
+<strong id="hourRate"></strong>
+</div>
+<div class="card stat">
+<span class="muted">今日可赚 · 税后</span>
+<strong id="dayRate"></strong>
+</div>
+</div>
+<div class="footer">时间会过去，努力会留下。加油，打工人 ☀<br>仅供娱乐参考，实际以工资条为准</div>
+</section>
+<aside class="card">
+<h2>我的上班设置</h2>
+<div class="muted">按你的节奏，算好每一分钱。</div>
+<form class="form" id="form">
+<div class="field">
+<label for="salary">月薪（元，税前）</label>
+<input id="salary" type="number" min="0.01" max="100000000" step="0.01" required>
+<div class="salary-preset">
+<button type="button" data-salary="8000">8K</button>
+<button type="button" data-salary="12000">12K</button>
+<button type="button" data-salary="15000">15K</button>
+<button type="button" data-salary="20000">20K</button>
+<button type="button" data-salary="25000">25K</button>
+<button type="button" data-salary="30000">30K+</button>
+</div>
+</div>
+<div class="field">
+<label for="schedule">休息制度</label>
+<select id="schedule">
+<option value="double">双休 · 周六、周日休息</option>
+<option value="single">单休 · 每周休息一天</option>
+<option value="alternate">大小周 · 单双休交替</option>
+<option value="half">5.5 天 · 周六上午上班</option>
+<option value="custom">自定义上班日</option>
+</select>
+<div id="alternateWrap" style="margin-top:12px">
+<label for="anchor">选择一个单休周内的日期</label>
+<input id="anchor" type="date">
+<div class="muted">该周周六全天上班，下一周周六休息，连续交替。</div>
+</div>
+<div id="halfWrap" style="margin-top:12px">
+<label for="halfEnd">周六上午几点下班</label>
+<input id="halfEnd" type="time">
+<div class="muted">周六沿用上班时间，上午下班后停止计薪；周日休息。</div>
+</div>
+<div id="singleWrap" style="margin-top:10px">
+<select id="rest" aria-label="单休休息日">
+<option value="0">周日休息</option>
+<option value="6">周六休息</option>
+<option value="1">周一休息</option>
+<option value="2">周二休息</option>
+<option value="3">周三休息</option>
+<option value="4">周四休息</option>
+<option value="5">周五休息</option>
+</select>
+</div>
+<div class="custom" id="customWrap">
+<div class="days" id="days"></div>
+<div class="muted">选中的日期为上班日</div>
+</div>
+</div>
+<div class="pair field">
+<div><label for="start">几点上班</label><input id="start" type="time" required></div>
+<div><label for="end">几点下班</label><input id="end" type="time" required></div>
+</div>
+<div class="field">
+<label class="check"><input id="breakOn" type="checkbox">扣除午休 / 休息时间</label>
+<div class="pair" id="breakFields">
+<input id="bs" type="time" aria-label="休息开始" required>
+<input id="be" type="time" aria-label="休息结束" required>
+</div>
+</div>
+<div class="field">
+<label for="payday">每月发工资日</label>
+<input id="payday" type="number" min="1" max="31" value="15" style="width:80px">
+<div class="muted">大部分公司 15 号发上月工资</div>
+</div>
+<div class="field">
+<label for="step">金额跳动方式</label>
+<select id="step">
+<option value="0">实时细算 · 显示 4 位小数</option>
+<option value="0.01">每赚 1 分跳一次</option>
+<option value="0.1">每赚 1 毛跳一次</option>
+<option value="1">每赚 1 块跳一次</option>
+</select>
+</div>
+<div class="summary" id="summary"></div>
+<button type="submit" class="save">保存设置，开始攒钱</button>
+<div class="error" id="message" role="status"></div>
+</form>
+<p class="note">
+按北京时间计算。月薪 ÷ 当月排班工时 = 时薪；休息日不累计。<br>
+<span style="color:#b8860b">税后估算</span>：深圳五险一金约扣 10.5%（养老8%+医疗2%+失业0.5%），个税按起征点 5000 元/月累进计算。<br>
+本月累计包含本月已过去的排班工时。未计入加班费、年终奖、补贴等。<br>
+设置仅保存在当前浏览器，刷新不丢失。
+</p>
+</aside>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const defaults={salary:15000,schedule:'double',halfEnd:'12:00',anchor:'2026-11-02',rest:0,days:[1,2,3,4,5],start:'09:30',end:'18:30',breakOn:true,bs:'12:00',be:'13:30',step:.01,unit:1,payday:15};
+let config={...defaults};
+try{config={...defaults,...JSON.parse(localStorage.getItem('money-clock-v2')||'{}')}}catch{}
+let customDays=[...config.days];
+
+// 深圳五险一金估算（个人缴纳部分约10.5%）
+function insuranceRate(salary){
+  // 深圳个人缴纳：养老8% + 医疗2% + 失业0.5% = 10.5%
+  // 缴费基数有上限（约为社平工资3倍），这里简化处理
+  const base = Math.min(salary, 34863); // 2024深圳社保缴费上限约34863
+  return base * 0.105;
+}
+
+// 个税估算（累进税率，起征点5000，扣除五险一金后）
+function taxEstimate(salary){
+  const ins = insuranceRate(salary);
+  const taxable = salary - ins - 5000;
+  if(taxable <= 0) return 0;
+  // 累进速算
+  if(taxable <= 3000) return taxable * 0.03;
+  if(taxable <= 12000) return taxable * 0.10 - 210;
+  if(taxable <= 25000) return taxable * 0.20 - 1410;
+  if(taxable <= 35000) return taxable * 0.25 - 2660;
+  if(taxable <= 55000) return taxable * 0.30 - 4410;
+  if(taxable <= 80000) return taxable * 0.35 - 7160;
+  return taxable * 0.45 - 15160;
+}
+
+// 税后月薪
+function netSalary(salary){
+  return salary - insuranceRate(salary) - taxEstimate(salary);
+}
+
+function minute(v){return Number(v.split(':')[0])*60+Number(v.split(':')[1])}
+function timing(c){let s=minute(c.start),e=minute(c.end);if(e<=s)e+=1440;let b=minute(c.bs),z=minute(c.be);if(b<s)b+=1440;if(z<=b)z+=1440;return {s,e,b,z,total:e-s-(c.breakOn?z-b:0)}}
+function monday(d){return +d-((d.getUTCDay()+6)%7)*86400000}
+function isWork(d,c){let w=d.getUTCDay();if(c.schedule==='double')return w!==0&&w!==6;if(c.schedule==='single')return w!==Number(c.rest);if(c.schedule==='half')return w!==0;if(c.schedule==='alternate'){let anchor=new Date(c.anchor+'T00:00:00Z');return w!==0&&(w!==6||Math.round((monday(d)-monday(anchor))/604800000)%2===0)}return c.days.includes(w)}
+function dayTiming(d,c){let t=timing(c);if(c.schedule==='half'&&d.getUTCDay()===6){t.e=minute(c.halfEnd);t.b=t.e;t.z=t.e;t.total=t.e-t.s}return t}
+function elapsed(t,x,c){let n=Math.max(0,Math.min(x,t.e)-t.s);if(c.breakOn)n-=Math.max(0,Math.min(x,t.z)-t.b);return Math.max(0,Math.min(t.total,n))}
+function dayInfo(d,now,c){let t=dayTiming(d,c),x=(now-d)/60000;return {t,x,minutes:isWork(d,c)?elapsed(t,x,c):0,active:isWork(d,c)&&x>=t.s&&x<t.e}}
+function calculate(now,c){let d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate())),prev=new Date(+d-86400000);let info=dayInfo(d,now,c),p=dayInfo(prev,now,c);if(p.active){d=prev;info=p}let y=d.getUTCFullYear(),m=d.getUTCMonth(),count=0,worked=0,total=0,halfCount=0;for(let n=1;n<=new Date(Date.UTC(y,m+1,0)).getUTCDate();n++){let day=new Date(Date.UTC(y,m,n));if(isWork(day,c)){count++;total+=dayTiming(day,c).total;worked+=dayInfo(day,now,c).minutes;if(c.schedule==='half'&&day.getUTCDay()===6)halfCount++}}let rate=total?c.salary/total:0;let netRate=total?netSalary(c.salary)/total:0;return {d,info,count,halfCount,total,rate,netRate,earned:info.minutes*rate,netEarned:info.minutes*netRate,month:worked*rate,netMonth:worked*netRate}}
+
+// 计算距离发工资的天数
+function paydayInfo(now,c){
+  let pd=c.payday||15;
+  let y=now.getUTCFullYear(),m=now.getUTCMonth();
+  // 当月天数
+  let daysInMonth=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+  let pdClamped=Math.min(pd,daysInMonth);
+  // 当月发薪日
+  let payday=new Date(Date.UTC(y,m,pdClamped));
+  let nowDate=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()));
+  let diff=Math.round((payday-nowDate)/86400000);
+  if(diff<0){
+    // 已过，算下月
+    payday=new Date(Date.UTC(y,m+1,pdClamped));
+    diff=Math.round((payday-nowDate)/86400000);
+  }
+  let monthLabel=payday.getUTCMonth()+1;
+  return {days:diff,date:`${monthLabel}月${payday.getUTCDate()}日`}
+}
+
+function clock(){return new Date(Date.now()+8*3600000)}
+function duration(seconds){seconds=Math.max(0,Math.floor(seconds));return `${String(Math.floor(seconds/3600)).padStart(2,'0')} : ${String(Math.floor(seconds/60)%60).padStart(2,'0')} : ${String(seconds%60).padStart(2,'0')}`}
+function render(){
+  let now=clock(),r=calculate(now,config),{t,x,active,minutes}=r.info,work=isWork(r.d,config),pause=active&&config.breakOn&&x>=t.b&&x<t.z;
+  let state=active?(pause?'休息中 · 暂停累计':'上班中 · 正在攒钱'):work&&x<t.s?'还没上班 · 养精蓄锐':work?'已下班 · 辛苦啦':'休息日 · 好好生活';
+  $('status').innerHTML='<span class="dot"></span>'+state;
+  $('date').textContent=`${now.getUTCMonth()+1}月${now.getUTCDate()}日 周${'日一二三四五六'[now.getUTCDay()]} ${now.toISOString().slice(11,19)}`;
+  let value=config.step?Math.floor((r.earned+1e-9)/config.step)*config.step:r.earned;
+  let netValue=config.step?Math.floor((r.netEarned+1e-9)/config.step)*config.step:r.netEarned;
+  let digits=config.step===0?4:Math.max(0,2-Math.log10(config.unit));
+  $('money').textContent=(value*config.unit).toLocaleString('zh-CN',{minimumFractionDigits:digits,maximumFractionDigits:digits});
+  let unit={1:'元',10:'毛',100:'分'}[config.unit];
+  $('unitLabel').textContent=unit;
+  $('rate').textContent=`税前赚钱速度 ${(r.rate/60*config.unit).toFixed(4)} ${unit} / 秒`;
+  $('netRate').textContent=`税后赚钱速度 ${(r.netRate/60*config.unit).toFixed(4)} ${unit} / 秒（扣五险一金+个税）`;
+  $('stepNote').textContent=config.step?`每赚 ${config.step===1?'1 块':config.step===.1?'1 毛':'1 分'}，数字就跳动一次`:'每秒更新，细算到小数点后 4 位';
+  $('countTitle').textContent=active?(pause?'休息结束倒计时':'距离下班还有'):work&&x<t.s?'距离上班还有':work?'今日工作已完成':'今天不用上班';
+  $('countdown').textContent=active?duration(((pause?t.z:t.e)-x)*60):work&&x<t.s?duration((t.s-x)*60):work?'下班快乐 ☀':'把时间留给自己';
+  let pct=work?minutes/t.total*100:0;
+  $('pct').textContent=pct.toFixed(1)+'%';
+  $('bar').style.width=pct+'%';
+  $('hours').textContent=`已工作 ${(minutes/60).toFixed(2)} / ${work?(t.total/60).toFixed(2):'0.00'} 小时`;
+  $('shift').textContent=work?config.start+' — '+(config.schedule==='half'&&r.d.getUTCDay()===6?config.halfEnd:config.end)+(t.e>=1440?' 次日':''):'今日休息';
+  // 发工资倒计时
+  let pd=paydayInfo(now,config);
+  $('paydayDate').textContent=pd.date;
+  $('paydayCountdown').textContent=`还有 ${pd.days} 天`;
+  let netPay=netSalary(config.salary);
+  $('paydayInfo').textContent=`预计到手 ¥${netPay.toFixed(2)}（税前¥${config.salary.toFixed(2)} - 五险一金¥${insuranceRate(config.salary).toFixed(2)} - 个税¥${taxEstimate(config.salary).toFixed(2)}）`;
+  // 统计卡片
+  $('month').textContent=r.month.toFixed(2);
+  let monthNet=r.netMonth.toFixed(2);
+  $('monthTax').textContent=`税后 ¥${monthNet}`;
+  $('hourRate').textContent=(r.netRate*60).toFixed(2);
+  $('dayRate').textContent=(work?r.netRate*t.total:0).toFixed(2);
+  document.querySelectorAll('[data-unit]').forEach(b=>b.classList.toggle('active',+b.dataset.unit===config.unit));
+}
+function readForm(){let c={...config,days:[...customDays]};['schedule','start','end','bs','be','anchor','halfEnd'].forEach(k=>c[k]=$(k).value);['salary','rest','step','payday'].forEach(k=>c[k]=+$(k).value);c.breakOn=$('breakOn').checked;return c}
+function validate(c){let t=timing(c);if(c.schedule==='alternate'&&!/^\d{4}-\d{2}-\d{2}$/.test(c.anchor))return '请选择单休周的日期。';if(c.schedule==='half'&&(!c.halfEnd||t.s>=720||minute(c.halfEnd)<=t.s||minute(c.halfEnd)>780||minute(c.halfEnd)>t.e))return '5.5 天制需上午上班，半天下班时间晚于上班、最迟 13:00，且不晚于全天班次结束。';if(!Number.isFinite(c.salary)||c.salary<=0)return '请输入大于 0 的月薪。';if(c.start===c.end)return '上下班时间不能相同。';if(c.schedule==='custom'&&!c.days.length)return '请至少选择一个上班日。';if(c.breakOn&&(t.b<t.s||t.z>t.e||t.z<=t.b||t.total<=0))return '休息时段需完整位于班次内，且短于整个班次。';if(c.payday<1||c.payday>31)return '发薪日需在 1-31 之间。';return ''}
+function updateForm(){let c=readForm();$('alternateWrap').style.display=c.schedule==='alternate'?'block':'none';$('halfWrap').style.display=c.schedule==='half'?'block':'none';$('singleWrap').style.display=c.schedule==='single'?'block':'none';$('customWrap').style.display=c.schedule==='custom'?'block':'none';$('breakFields').style.display=c.breakOn?'grid':'none';let err=validate(c);if(err){$('summary').textContent=err;return}let r=calculate(clock(),c);let netPay=netSalary(c.salary);$('summary').innerHTML=`全天 ${(timing(c).total/60).toFixed(2)} 小时 · 本月 ${r.count-r.halfCount} 个全天${r.halfCount?' + '+r.halfCount+' 个上午半天':''} · 共 ${(r.total/60).toFixed(2)} 小时<br>税前时薪 ¥${(r.rate*60).toFixed(2)} · 税后时薪 ¥${(netSalary(c.salary)/r.total*60).toFixed(2)} · 月到手 ¥${netPay.toFixed(2)}`;}
+['salary','schedule','rest','start','end','bs','be','step','anchor','halfEnd','payday'].forEach(k=>{if($(k))$(k).value=config[k]});
+$('breakOn').checked=config.breakOn;
+[1,2,3,4,5,6,0].forEach(d=>{let b=document.createElement('button');b.type='button';b.textContent='一二三四五六日'[[1,2,3,4,5,6,0].indexOf(d)];b.className=customDays.includes(d)?'on':'';b.onclick=()=>{customDays=customDays.includes(d)?customDays.filter(x=>x!==d):[...customDays,d];b.classList.toggle('on',customDays.includes(d));updateForm()};$('days').append(b)});
+// 薪资快捷按钮
+document.querySelectorAll('.salary-preset button').forEach(b=>b.onclick=()=>{
+  let v=+b.dataset.salary;
+  $('salary').value=v;
+  config.salary=v;
+  save();render();updateForm();
+});
+$('form').addEventListener('input',updateForm);
+$('form').onsubmit=e=>{e.preventDefault();let c=readForm(),err=validate(c);if(err){$('message').textContent=err;return}config=c;save();render();updateForm()};
+function save(){try{localStorage.setItem('money-clock-v2',JSON.stringify(config));$('message').style.color='#54804c';$('message').textContent='已保存，按新设置计算 ✓'}catch{$('message').textContent='当前浏览器无法保存，设置仅在本次页面生效。'}}
+document.querySelectorAll('[data-unit]').forEach(b=>b.onclick=()=>{config.unit=+b.dataset.unit;save();render()});
+updateForm();render();setInterval(render,1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Build artifacts
+*.o
+*.obj
+MoneyClock.exe
+money_clock.exe
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Editor
+*.swp
+*.swo
+*~
