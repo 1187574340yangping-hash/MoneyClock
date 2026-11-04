@@ -1,7 +1,6 @@
 # Build artifacts
 *.o
 *.obj
-MoneyClock.exe
 money_clock.exe
 
 # OS files
